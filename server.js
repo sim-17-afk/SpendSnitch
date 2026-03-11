@@ -59,7 +59,7 @@ app.get('/api/user-data', async (req, res) => {
             name: user.name,
             email: user.email,
             bio: user.bio,
-            savings: user.balance, 
+            savings: user.savings || 0, // Use 'savings' instead of 'balance'
             transactions: user.transactions,
             createdAt: user.createdAt // <-- ADDED THIS LINE to send the date to the profile page
         });
