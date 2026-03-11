@@ -4,7 +4,7 @@ const cors = require('cors');
 const User = require('./models/User'); // Imports your new User.js model
 
 const app = express();
-const PORT = 5000;
+// const PORT = 5000;
 
 // Middleware
 app.use(cors()); 
