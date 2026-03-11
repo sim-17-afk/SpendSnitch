@@ -182,7 +182,7 @@
             
             const userEmail = localStorage.getItem('userEmail');
             try {
-                const response = await fetch('http://localhost:5000/api/reset-data', {
+                const response = await fetch('https://spendsnitch.onrender.com/api/reset-data', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: userEmail })

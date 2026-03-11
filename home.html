@@ -238,7 +238,7 @@
       async function refreshData() {
         const userEmail = localStorage.getItem("userEmail");
         try {
-          const response = await fetch(`http://localhost:5000/api/user-data?email=${userEmail}`);
+          const response = await fetch(`https://spendsnitch.onrender.com/api/user-data?email=${userEmail}`);
           const data = await response.json();
           if (response.ok) {
             const displayName = data.name || "User";
@@ -323,7 +323,7 @@
         if (!amount || amount <= 0) return alert("Please enter a valid amount");
 
         try {
-          const response = await fetch("http://localhost:5000/api/transaction", {
+          const response = await fetch("https://spendsnitch.onrender.com/api/transaction", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: userEmail, amount, type: transactionType, category }),
