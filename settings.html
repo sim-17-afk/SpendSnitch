@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpendSnitch | Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Fredoka', sans-serif; 
+            background-color: #0b141a; 
+            background-image: url('image_184f59.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        /* The Cash Wallpaper Effect */
+        .cash-effect::after {
+            content: "₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹";
+            position: fixed;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            font-size: 60px; font-weight: 900; color: rgba(34, 211, 238, 0.04); 
+            word-wrap: break-word; line-height: 140px; letter-spacing: 100px;
+            transform: rotate(-15deg); z-index: -1; pointer-events: none;
+        }
+
+        .neon-sidebar {
+            background: rgba(11, 20, 26, 0.95);
+            border: 1px solid rgba(34, 211, 238, 0.4);
+            border-radius: 40px;
+        }
+
+        .settings-card {
+            background: rgba(17, 34, 44, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            border-radius: 30px;
+            padding: 2rem;
+        }
+
+        /* Toggle Switch UI */
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            background: #334155;
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .toggle-active { background: #22d3ee; box-shadow: 0 0 15px rgba(34, 211, 238, 0.4); }
+        .toggle-dot {
+            width: 20px; height: 20px; background: white;
+            border-radius: 50%; position: absolute; top: 3px; left: 3px;
+            transition: 0.3s;
+        }
+        .toggle-active .toggle-dot { left: 27px; }
+
+        .danger-zone {
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            background: rgba(244, 63, 94, 0.05);
+        }
+    </style>
+</head>
+<body id="mainBody" class="cash-effect">
+
+    <div class="flex min-h-screen">
+        <aside class="w-72 m-6 mr-0 neon-sidebar flex flex-col p-8 hidden md:flex shrink-0">
+            <div class="text-center mb-10">
+                <div class="w-20 h-20 mx-auto mb-4">
+                    <img id="sideAvatar" src="" class="rounded-full border-2 border-cyan-400 p-1" alt="Avatar">
+                </div>
+                <h2 id="sideName" class="text-lg font-bold text-white uppercase tracking-wider">User</h2>
+            </div>
+            <nav class="space-y-3 flex-grow">
+                <a href="home.html" class="flex items-center gap-4 p-4 rounded-2xl text-gray-400 font-bold hover:bg-white/5">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </a>
+                <a href="#" class="flex items-center gap-4 p-4 rounded-2xl bg-cyan-400/10 text-cyan-400 font-bold border border-cyan-400/30">
+                    <i class="fa-solid fa-gear"></i> Settings
+                </a>
+                <button onclick="logout()" class="w-full mt-10 flex items-center gap-4 p-4 rounded-2xl bg-rose-500/10 text-rose-500 font-bold hover:bg-rose-500/20">
+                    <i class="fa-solid fa-power-off"></i> Logout
+                </button>
+            </nav>
+        </aside>
+
+        <main class="flex-grow p-10">
+            <header class="mb-10">
+                <h1 class="text-4xl font-bold text-white">App Settings</h1>
+                <p class="text-gray-400">Configure your SpendWise experience</p>
+            </header>
+
+            <div class="max-w-2xl space-y-6">
+                <section class="settings-card">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Appearance
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-black/20 rounded-2xl border border-white/5">
+                            <div>
+                                <p class="font-bold">Cash Wallpaper</p>
+                                <p class="text-xs text-gray-500">Enable floating currency symbols</p>
+                            </div>
+                            <div id="wallpaperToggle" class="toggle-switch" onclick="toggleWallpaper()">
+                                <div class="toggle-dot"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-black/20 rounded-2xl border border-white/5">
+                            <div>
+                                <p class="font-bold">Neon Glassmorphism</p>
+                                <p class="text-xs text-gray-500">High intensity glow effects</p>
+                            </div>
+                            <div class="toggle-switch toggle-active cursor-not-allowed opacity-50">
+                                <div class="toggle-dot" style="left: 27px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="settings-card danger-zone">
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-rose-400">
+                        <i class="fa-solid fa-database"></i> Data Management
+                    </h3>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-bold">Clear All Transactions</p>
+                            <p class="text-xs text-gray-500">This will reset your balance to zero.</p>
+                        </div>
+                        <button onclick="resetData()" class="px-5 py-2 bg-rose-500/20 border border-rose-500/50 text-rose-500 rounded-xl font-bold hover:bg-rose-500 hover:text-white transition">
+                            Reset
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const userName = localStorage.getItem('userName') || 'User';
+            const avatarSeed = localStorage.getItem('userAvatarSeed') || userName;
+            const cashEffect = localStorage.getItem('cashEffect') !== 'off';
+
+            document.getElementById('sideName').innerText = userName;
+            document.getElementById('sideAvatar').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${avatarSeed}`;
+
+            // Sync wallpaper state
+            if (!cashEffect) {
+                document.getElementById('mainBody').classList.remove('cash-effect');
+                document.getElementById('wallpaperToggle').classList.remove('toggle-active');
+            } else {
+                document.getElementById('wallpaperToggle').classList.add('toggle-active');
+            }
+        };
+
+        function toggleWallpaper() {
+            const body = document.getElementById('mainBody');
+            const toggle = document.getElementById('wallpaperToggle');
+            
+            if (body.classList.contains('cash-effect')) {
+                body.classList.remove('cash-effect');
+                toggle.classList.remove('toggle-active');
+                localStorage.setItem('cashEffect', 'off');
+            } else {
+                body.classList.add('cash-effect');
+                toggle.classList.add('toggle-active');
+                localStorage.setItem('cashEffect', 'on');
+            }
+        }
+
+        async function resetData() {
+            if (!confirm("Are you ABSOLUTELY sure? This will delete all your income and expense records forever.")) return;
+            
+            const userEmail = localStorage.getItem('userEmail');
+            try {
+                const response = await fetch('http://localhost:5000/api/reset-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail })
+                });
+                if (response.ok) {
+                    alert("Data wiped successfully.");
+                    window.location.href = 'homeS.html';
+                }
+            } catch (err) {
+                alert("Could not connect to server.");
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpendSnitch | Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased gradient-bg min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div class="p-8">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800">Welcome Back</h2>
+                <p class="text-gray-500 text-sm mt-1">Login to manage your expenses.</p>
+            </div>
+            
+            <form id="login-form" class="space-y-5" onsubmit="handleLogin(event)">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Email Address</label>
+                    <input id="emailInput" type="email" placeholder="name@example.com" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-400 outline-none transition" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Password</label>
+                    <input id="passwordInput" type="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-400 outline-none transition" required>
+                </div>
+
+                <button type="submit" class="w-full py-4 bg-purple-600 text-white font-bold rounded-xl shadow-lg hover:bg-purple-700 transform hover:-translate-y-0.5 transition duration-200">
+                    Sign In
+                </button>
+                
+                <div class="text-center pt-4 border-t border-gray-100">
+                    <p class="text-sm text-gray-600">
+                        Don't have an account? 
+                        <a href="signup.html" class="text-purple-600 font-bold hover:underline">Create One</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+
+            try {
+                // Fetching from /api/login to match our new server.js
+                const response = await fetch('http://localhost:5000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // SUCCESS: Save user details for the home/dashboard page
+                    localStorage.setItem('userName', data.name);
+                    localStorage.setItem('userEmail', data.email);
+                    localStorage.setItem('userBalance', data.balance || 0);
+                    
+                    // Redirect to your main dashboard
+                    window.location.href = 'home.html'; 
+                } else {
+                    alert("Login Failed: " + (data.error || "Invalid email or password"));
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Server is not responding. Ensure 'node server.js' is running!");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpendSnitch | Create Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+        }
+        @keyframes scaleIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-success {
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased overflow-hidden">
+
+    <div id="success-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-indigo-900/90 backdrop-blur-sm hidden">
+        <div class="text-center bg-white p-10 rounded-3xl shadow-2xl mx-4 animate-success">
+            <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-check text-4xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800">Account created!</h2>
+            <p id="welcome-msg" class="text-gray-500 mt-2">Redirecting you to login...</p>
+        </div>
+    </div>
+
+    <div class="min-h-screen flex flex-col items-center justify-center p-4 gradient-bg">
+        <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Join SpendWise</h2>
+                    <p class="text-gray-500 text-sm mt-1">Start tracking your journey today.</p>
+                </div>
+                
+                <form id="signup-form" class="space-y-5" onsubmit="handleSignup(event)">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Full Name</label>
+                        <input id="nameInput" type="text" placeholder="John Doe" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-400 outline-none transition" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Email Address</label>
+                        <input id="emailInput" type="email" placeholder="name@example.com" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-400 outline-none transition" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Create Password</label>
+                        <input id="passwordInput" type="password" placeholder="Min. 8 characters" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-purple-400 outline-none transition" required>
+                    </div>
+
+                    <div class="flex items-start gap-2 py-2">
+                        <input type="checkbox" id="terms" class="mt-1 rounded text-purple-600 focus:ring-purple-500" required>
+                        <label for="terms" class="text-xs text-gray-500 leading-snug">I agree to the Terms of Service.</label>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-purple-600 text-white font-bold rounded-xl shadow-lg hover:bg-purple-700 transform hover:-translate-y-0.5 transition duration-200">
+                        Create My Account
+                    </button>
+                    
+                    <div class="text-center pt-4 border-t border-gray-100">
+                        <p class="text-sm text-gray-600">
+                            Already have an account? 
+                            <a href="login.html" class="text-purple-600 font-bold hover:underline">Sign In</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function handleSignup(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('nameInput').value;
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const overlay = document.getElementById('success-overlay');
+
+            try {
+                // Ensure the URL matches your server.js route exactly
+                const response = await fetch('http://localhost:5000/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                // Check if the response is actually JSON before parsing
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        overlay.classList.remove('hidden');
+                        document.getElementById('welcome-msg').innerText = `Namaste ${name}! Redirecting...`;
+                        
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 3000);
+                    } else {
+                        alert("Oops: " + (data.error || "Signup failed"));
+                    }
+                } else {
+                    // This handles the "Unexpected token <" error by telling you the URL is likely wrong
+                    throw new Error("Server returned an HTML error page. Check if the URL /api/register exists in server.js");
+                }
+
+            } catch (error) {
+                console.error("Error details:", error);
+                alert("Cannot connect to server. Ensure 'node server.js' is running and CORS is enabled!");
+            }
+        }
+    </script>
+</body>
+</html>

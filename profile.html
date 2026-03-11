@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SpendSnitch | My Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        font-family: "Fredoka", sans-serif;
+        background-color: #0b141a;
+        background-image: url("image_184f59.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: #e2e8f0;
+        min-height: 100vh;
+      }
+
+      body::after {
+        content: "₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹ ₹";
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        font-size: 60px;
+        font-weight: 900;
+        color: rgba(34, 211, 238, 0.04);
+        word-wrap: break-word;
+        line-height: 140px;
+        letter-spacing: 100px;
+        transform: rotate(-15deg);
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      .neon-sidebar {
+        background: rgba(11, 20, 26, 0.95);
+        border: 1px solid rgba(34, 211, 238, 0.4);
+        border-radius: 40px;
+      }
+
+      .profile-card {
+        background: rgba(17, 34, 44, 0.8);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(34, 211, 238, 0.2);
+        border-radius: 40px;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+      }
+
+      .avatar-main {
+        border: 4px solid #22d3ee;
+        box-shadow: 0 0 25px rgba(34, 211, 238, 0.4);
+      }
+
+      .input-field {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(34, 211, 238, 0.2);
+        border-radius: 18px;
+        padding: 14px 20px;
+        color: white;
+        outline: none;
+        width: 100%;
+        transition: 0.3s;
+      }
+
+      .input-field:focus {
+        border-color: #22d3ee;
+        box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+      }
+
+      select.input-field option {
+        background: #11222c;
+        color: white;
+      }
+
+      .btn-update {
+        background: linear-gradient(90deg, #06b6d4, #22d3ee);
+        color: #0b141a;
+        font-weight: 800;
+        padding: 14px 28px;
+        border-radius: 18px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: 0.3s;
+      }
+
+      .btn-update:hover {
+        box-shadow: 0 0 25px rgba(34, 211, 238, 0.6);
+        transform: translateY(-2px);
+      }
+
+      #toast {
+        visibility: hidden;
+        min-width: 250px;
+        background-color: #11222c;
+        color: #22d3ee;
+        text-align: center;
+        border: 1px solid #22d3ee;
+        border-radius: 20px;
+        padding: 16px;
+        position: fixed;
+        z-index: 100;
+        right: 30px;
+        bottom: 30px;
+        font-weight: 600;
+        box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+      }
+
+      #toast.show {
+        visibility: visible;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      }
+
+      @keyframes fadein {
+        from { bottom: 0; opacity: 0; }
+        to { bottom: 30px; opacity: 1; }
+      }
+
+      @keyframes fadeout {
+        from { bottom: 30px; opacity: 1; }
+        to { bottom: 0; opacity: 0; }
+      }
+
+      .stat-box {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 15px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="toast">Profile updated! ✨</div>
+
+    <div class="flex min-h-screen">
+      <aside class="w-72 m-6 mr-0 neon-sidebar flex flex-col p-8 hidden md:flex shrink-0">
+        <div class="text-center mb-10">
+          <div class="w-20 h-20 mx-auto mb-4">
+            <img id="sideAvatar" src="" class="rounded-full border-2 border-cyan-400 p-1" alt="Avatar" />
+          </div>
+          <h2 id="sideName" class="text-lg font-bold text-white uppercase tracking-wider">User</h2>
+        </div>
+        <nav class="space-y-3 flex-grow">
+          <a href="home.html" class="flex items-center gap-4 p-4 rounded-2xl text-gray-400 font-bold hover:bg-white/5">
+            <i class="fa-solid fa-house"></i> Dashboard
+          </a>
+          <a href="profile.html" class="flex items-center gap-4 p-4 rounded-2xl bg-cyan-400/10 text-cyan-400 font-bold border border-cyan-400/30">
+            <i class="fa-solid fa-user"></i> My Profile
+          </a>
+          <a href="settings.html" class="flex items-center gap-4 p-4 rounded-2xl text-gray-400 font-bold hover:bg-white/5">
+            <i class="fa-solid fa-gear"></i> Settings
+          </a>
+          <button onclick="logout()" class="w-full mt-10 flex items-center gap-4 p-4 rounded-2xl bg-rose-500/10 text-rose-500 font-bold hover:bg-rose-500/20">
+            <i class="fa-solid fa-power-off"></i> Logout
+          </button>
+        </nav>
+      </aside>
+
+      <main class="flex-grow p-10 flex flex-col items-center">
+        <div class="max-w-xl w-full">
+          <header class="mb-10 text-center">
+            <h1 class="text-4xl font-bold text-white">My Profile</h1>
+            <p class="text-gray-400 italic">Manage your account details</p>
+          </header>
+
+          <div class="profile-card p-10 relative overflow-hidden">
+            <div class="flex flex-col items-center mb-10 text-center">
+              <div class="relative mb-6">
+                <img id="mainAvatar" src="" class="w-32 h-32 rounded-full avatar-main p-1 object-cover" alt="Large Avatar" />
+                <div class="absolute bottom-1 right-1 bg-cyan-400 text-black w-8 h-8 rounded-full flex items-center justify-center border-4 border-[#11222c]">
+                  <i class="fa-solid fa-check text-[10px]"></i>
+                </div>
+              </div>
+              <h2 id="profileNameDisplay" class="text-3xl font-bold text-white mb-1">User Name</h2>
+              <p id="profileBioDisplay" class="text-gray-400 text-sm mb-2 italic">No bio selected</p>
+              <p id="profileEmailDisplay" class="text-cyan-400 font-bold tracking-wide opacity-80">user@example.com</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-10">
+              <div class="stat-box">
+                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1">Member Since</p>
+                <p id="memberSinceDisplay" class="text-white font-bold">...</p>
+              </div>
+              <div class="stat-box">
+                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1">Account Type</p>
+                <p class="text-cyan-400 font-bold">VIP Platinum</p>
+              </div>
+            </div>
+
+            <div class="space-y-6">
+              <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Edit Display Name</label>
+                <input type="text" id="nameInput" class="input-field" placeholder="Enter new name..." />
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 ml-1">Select Bio</label>
+                <select id="bioInput" class="input-field appearance-none cursor-pointer">
+                  <option value="💎 Emotionally stable. Financially questionable.">💎 Emotionally stable. Financially questionable.</option>
+                  <option value="👑 Architect of every bad purchase.">👑 Architect of every bad purchase.</option>
+                  <option value="🚀 High standards. Low Balance.">🚀 High standards. Low Balance.</option>
+                  <option value="📈 Broke, but aesthetic.">📈 Broke, but aesthetic.</option>
+                  <option value="🪙 Professional overthinker. Amateur saver.">🪙 Professional overthinker. Amateur saver.</option>
+                  <option value="🔓 In a commited relationship with 'Add to Cart'.">🔓 In a commited relationship with 'Add to Cart'.</option>
+                </select>
+              </div>
+
+              <button onclick="updateProfile()" class="w-full btn-update">Save Changes</button>
+            </div>
+
+            <i class="fa-solid fa-shield-halved absolute -right-6 -bottom-6 text-9xl text-white opacity-[0.02]"></i>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.innerText = message;
+        toast.className = "show";
+        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+      }
+
+      // Helper to format ISO date (2026-03-11...) to "March 2026"
+      function formatDate(isoString) {
+        if (!isoString) return "March 2026"; // Fallback
+        const date = new Date(isoString);
+        return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      }
+
+      function updateUIName(name) {
+        const safeName = name || localStorage.getItem("userName") || "User";
+        document.getElementById("sideName").innerText = safeName;
+        document.getElementById("profileNameDisplay").innerText = safeName;
+        document.getElementById("nameInput").value = safeName;
+
+        const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(safeName)}`;
+        document.getElementById("sideAvatar").src = avatarUrl;
+        document.getElementById("mainAvatar").src = avatarUrl;
+      }
+
+      function updateUIBio(bio) {
+        const safeBio = bio || localStorage.getItem("userBio") || "💎 Emotionally stable. Financially questionable.";
+        document.getElementById("profileBioDisplay").innerText = safeBio;
+        document.getElementById("bioInput").value = safeBio;
+      }
+
+     
+
+window.onload = async function () {
+  const userEmail = localStorage.getItem("userEmail");
+  if (!userEmail) return (window.location.href = "login.html");
+
+  updateUIName();
+  updateUIBio();
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/user-data?email=${userEmail}`);
+    const data = await response.json();
+
+    console.log("Server Data Received:", data); // Check your console (F12) for this!
+
+    if (response.ok) {
+      updateUIName(data.name);
+      updateUIBio(data.bio);
+      document.getElementById("profileEmailDisplay").innerText = data.email || userEmail;
+      
+      // Update the date
+      const dateElement = document.getElementById("memberSinceDisplay");
+      if (data.createdAt) {
+          dateElement.innerText = formatDate(data.createdAt);
+      } else {
+          dateElement.innerText = "March 2026"; // Fallback if data is missing
+      }
+
+      localStorage.setItem("userName", data.name || "User");
+      if (data.bio) localStorage.setItem("userBio", data.bio);
+    }
+  } catch (err) {
+    console.error("Fetch failed:", err);
+    document.getElementById("memberSinceDisplay").innerText = "Error";
+  }
+};
+
+      async function updateProfile() {
+        const userEmail = localStorage.getItem("userEmail");
+        const newName = document.getElementById("nameInput").value;
+        const bioSelect = document.getElementById("bioInput");
+        const newBio = bioSelect.value;
+
+        if (!newName.trim()) {
+            showToast("Name is required! ⚠️");
+            return;
+        }
+
+        try {
+          const response = await fetch("http://localhost:5000/api/update-profile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: userEmail, name: newName, bio: newBio }),
+          });
+
+          if (response.ok) {
+            updateUIName(newName);
+            updateUIBio(newBio);
+            localStorage.setItem("userName", newName);
+            localStorage.setItem("userBio", newBio);
+            showToast("Profile updated! ✨");
+          } else {
+            showToast("Update failed. ❌");
+          }
+        } catch (err) {
+          showToast("Connection error. 🌐");
+        }
+      }
+
+      function logout() {
+        localStorage.clear();
+        window.location.href = "login.html";
+      }
+    </script>
+  </body>
+</html>

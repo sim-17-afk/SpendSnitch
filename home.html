@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SpendSnitch | My Money</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        font-family: "Fredoka", sans-serif;
+        background-color: #0b141a;
+        background-image: url("image_184f59.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        color: #e2e8f0;
+        margin: 0;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      .neon-sidebar {
+        background: rgba(11, 20, 26, 0.95);
+        border: 1px solid rgba(34, 211, 238, 0.4);
+        box-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
+        border-radius: 40px;
+      }
+
+      .avatar-glow {
+        border: 3px solid #22d3ee;
+        box-shadow: 0 0 15px #22d3ee;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .btn-income {
+        border: 2px solid #4ade80;
+        color: #4ade80;
+        box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+        background: rgba(74, 222, 128, 0.05);
+      }
+      .btn-income:hover {
+        background: rgba(74, 222, 128, 0.15);
+        box-shadow: 0 0 30px rgba(74, 222, 128, 0.5);
+        transform: scale(1.05);
+      }
+
+      .btn-expense {
+        border: 2px solid #fb7185;
+        color: #fb7185;
+        box-shadow: 0 0 20px rgba(251, 113, 133, 0.3);
+        background: rgba(251, 113, 133, 0.05);
+      }
+      .btn-expense:hover {
+        background: rgba(251, 113, 133, 0.15);
+        box-shadow: 0 0 30px rgba(251, 113, 133, 0.5);
+        transform: scale(1.05);
+      }
+
+      .neon-card {
+        background: rgba(17, 34, 44, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(34, 211, 238, 0.2);
+        border-radius: 24px;
+      }
+      .cash-card {
+        background: linear-gradient(135deg, #162e2e 0%, #091414 100%);
+        border: 2px solid #22d3ee;
+        box-shadow: 0 0 30px rgba(34, 211, 238, 0.3);
+        border-radius: 40px;
+        position: relative;
+        overflow: hidden;
+      }
+      .modal-hidden {
+        display: none !important;
+      }
+      .modal-active {
+        display: flex !important;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .custom-scroll::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb {
+        background: rgba(34, 211, 238, 0.3);
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="transactionModal"
+      class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md modal-hidden items-center justify-center p-4"
+    >
+      <div
+        class="bg-[#11222c] w-full max-w-sm rounded-[35px] p-8 border border-white/10 shadow-2xl"
+      >
+        <h3 id="modalTitle" class="text-2xl font-bold mb-2 text-white">
+          Add Transaction
+        </h3>
+        <div class="relative my-6">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-cyan-400">₹</span>
+          <input
+            type="number"
+            id="amountInput"
+            placeholder="0"
+            class="w-full pl-10 pr-4 py-4 bg-black/20 border border-white/10 rounded-2xl text-2xl font-bold focus:border-cyan-400 outline-none text-white"
+          />
+        </div>
+        <div class="mb-4">
+          <select
+            id="categoryInput"
+            onchange="toggleCustomCategory()"
+            class="w-full px-4 py-4 bg-black/20 border border-white/10 rounded-2xl font-bold outline-none text-white appearance-none"
+          >
+            <option value="Food">🍕 Food & Drinks</option>
+            <option value="Shopping">🛍️ Shopping</option>
+            <option value="Salary">💰 Salary/Income</option>
+            <option value="Other">✨ Other</option>
+          </select>
+        </div>
+
+        <div id="customCategoryWrapper" class="mb-6 hidden">
+          <input
+            type="text"
+            id="customCategoryInput"
+            placeholder="Type category name..."
+            class="w-full px-4 py-4 bg-black/20 border border-cyan-400/50 rounded-2xl font-bold outline-none text-white focus:border-cyan-400"
+          />
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="closeModal()" class="flex-1 py-4 bg-white/5 text-white font-bold rounded-2xl">Cancel</button>
+          <button onclick="processTransaction()" class="flex-1 py-4 bg-cyan-600 text-white font-bold rounded-2xl">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex min-h-screen">
+      <aside class="w-72 m-6 mr-0 neon-sidebar flex flex-col p-8 hidden md:flex shrink-0">
+        <div class="text-center mb-10 relative">
+          <div class="w-24 h-24 mx-auto mb-4 relative inline-block">
+            <img id="userAvatar" src="" class="relative rounded-full avatar-glow p-1 w-full h-full object-cover" alt="Avatar" />
+          </div>
+          <h2 id="sidebarName" class="text-xl font-bold text-white mt-2">User</h2>
+        </div>
+        <nav class="space-y-3 flex-grow">
+          <a href="home.html" class="flex items-center gap-4 p-4 rounded-2xl bg-cyan-400/10 text-cyan-400 font-bold border border-cyan-400/30"><i class="fa-solid fa-house"></i> Dashboard</a>
+          <a href="profile.html" class="flex items-center gap-4 p-4 rounded-2xl text-gray-400 font-bold hover:bg-white/5"><i class="fa-solid fa-user"></i> My Profile</a>
+          <a href="settings.html" class="flex items-center gap-4 p-4 rounded-2xl text-gray-400 font-bold hover:bg-white/5"><i class="fa-solid fa-gear"></i> Settings</a>
+          <button onclick="logout()" class="w-full mt-10 flex items-center gap-4 p-4 rounded-2xl bg-rose-500/10 text-rose-500 font-bold hover:bg-rose-500/20 transition"><i class="fa-solid fa-power-off"></i> Logout</button>
+        </nav>
+      </aside>
+
+      <main class="flex-grow p-8">
+        <header class="mb-10">
+          <h1 id="userGreeting" class="text-4xl font-bold text-white mb-1">Heyyy! 🫣</h1>
+          <p class="text-gray-400 font-medium italic">Your bank balance deserves an investigation.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div class="space-y-8">
+            <div class="cash-card p-10 h-64 flex flex-col justify-center">
+              <p class="uppercase tracking-widest text-[10px] font-bold text-cyan-300 opacity-80 mb-2">Total Savings</p>
+              <h2 class="text-7xl font-bold tracking-tight text-white">₹<span id="totalSavings">0</span></h2>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+              <button onclick="openModal('income')" class="btn-income p-8 rounded-[30px] flex flex-col items-center gap-3 transition transform hover:scale-105">
+                <i class="fa-solid fa-angles-down text-2xl"></i><span class="font-bold text-sm">Add Income</span>
+              </button>
+              <button onclick="openModal('expense')" class="btn-expense p-8 rounded-[30px] flex flex-col items-center gap-3 transition transform hover:scale-105">
+                <i class="fa-solid fa-angles-up text-2xl"></i><span class="font-bold text-sm">Add Expense</span>
+              </button>
+            </div>
+
+            <div class="neon-card p-8">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-white text-lg">Money Flow</h3>
+                <span id="healthScore" class="text-[10px] text-cyan-400 font-bold border border-cyan-400/30 px-2 py-1 rounded-lg italic">Calculating...</span>
+              </div>
+              <div class="flex items-center justify-between gap-4 h-44 relative">
+                <div class="flex-1 h-full"><canvas id="moneyFlowChart"></canvas></div>
+                <div class="flex flex-col justify-center gap-4 pr-4">
+                  <div class="flex flex-col"><span class="text-[10px] font-bold text-green-400 uppercase tracking-widest">Total Income</span><span class="text-xl font-bold text-white">₹<span id="displayTotalIncome">0</span></span></div>
+                  <div class="flex flex-col"><span class="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Total Expenses</span><span class="text-xl font-bold text-white">₹<span id="displayTotalExpense">0</span></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-6">
+            <h3 class="text-xl font-bold text-white px-2">Recent Activity</h3>
+            <div id="activityList" class="custom-scroll space-y-4 pr-2 max-h-[600px] overflow-y-auto"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      let currentSavings = 0;
+      let transactionType = "income";
+      let myChart = null;
+
+      function updateAvatar(name) {
+        const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name || "User")}`;
+        const avatarImg = document.getElementById("userAvatar");
+        if(avatarImg) avatarImg.src = avatarUrl;
+      }
+
+      window.onload = async function () {
+        const userEmail = localStorage.getItem("userEmail");
+        if (!userEmail) return window.location.href = "login.html";
+        
+        const cachedName = localStorage.getItem("userName") || "User";
+        document.getElementById("sidebarName").innerText = cachedName;
+        document.getElementById("userGreeting").innerText = `Heyyy, ${cachedName}! 🫣`;
+        updateAvatar(cachedName);
+        refreshData();
+      };
+
+      async function refreshData() {
+        const userEmail = localStorage.getItem("userEmail");
+        try {
+          const response = await fetch(`http://localhost:5000/api/user-data?email=${userEmail}`);
+          const data = await response.json();
+          if (response.ok) {
+            const displayName = data.name || "User";
+            document.getElementById("userGreeting").innerText = `Heyyy, ${displayName}! 🫣`;
+            document.getElementById("sidebarName").innerText = displayName;
+            updateAvatar(displayName);
+            localStorage.setItem("userName", displayName);
+            currentSavings = data.savings || 0;
+            document.getElementById("totalSavings").innerText = currentSavings.toLocaleString("en-IN");
+            
+            const list = document.getElementById("activityList");
+            list.innerHTML = ""; 
+            if (!data.transactions || data.transactions.length === 0) {
+              list.innerHTML = `<p class="text-center text-gray-500 py-10">No transactions yet.</p>`;
+            } else {
+              [...data.transactions].reverse().forEach(renderTransaction);
+            }
+            updateChart(data.transactions || []);
+          }
+        } catch (err) { console.error("Sync failed:", err); }
+      }
+
+      function updateChart(transactions) {
+        const ctx = document.getElementById("moneyFlowChart").getContext("2d");
+        let totalInc = 0, totalExp = 0;
+        transactions.forEach(tx => tx.type === "income" ? totalInc += tx.amount : totalExp += tx.amount);
+        
+        document.getElementById("displayTotalIncome").innerText = totalInc.toLocaleString("en-IN");
+        document.getElementById("displayTotalExpense").innerText = totalExp.toLocaleString("en-IN");
+        const score = totalInc > 0 ? Math.round(((totalInc - totalExp) / totalInc) * 100) : 0;
+        document.getElementById("healthScore").innerText = `Wallet Health: ${score}%`;
+
+        if (myChart) myChart.destroy();
+        myChart = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["Income", "Expenses"],
+            datasets: [{ data: [totalInc, totalExp], backgroundColor: ["#4ade80", "#fb7185"], borderColor: "#11222c", borderWidth: 4 }],
+          },
+          options: { cutout: "75%", responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } },
+        });
+      }
+
+      function renderTransaction(tx) {
+        const list = document.getElementById("activityList");
+        const isInc = tx.type === "income";
+        const date = new Date(tx.date).toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+        const div = document.createElement("div");
+        div.className = "neon-card p-5 flex items-center justify-between group transition hover:bg-white/5";
+        div.innerHTML = `
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center border ${isInc ? "border-green-500/30 bg-green-500/10" : "border-rose-500/30 bg-rose-500/10"}">
+              <i class="fa-solid ${isInc ? "fa-plus text-green-400" : "fa-minus text-rose-400"} text-xs"></i>
+            </div>
+            <div><p class="font-bold text-gray-200">${tx.category}</p><p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">${date}</p></div>
+          </div>
+          <div class="flex items-center gap-4">
+            <p class="font-bold ${isInc ? 'text-green-400' : 'text-rose-400'}">${isInc ? "+" : "-"}₹${tx.amount.toLocaleString("en-IN")}</p>
+            <button onclick="deleteTransaction('${tx._id}')" class="text-gray-600 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition px-2"><i class="fa-solid fa-trash-can"></i></button>
+          </div>`;
+        list.appendChild(div);
+      }
+
+      function toggleCustomCategory() {
+        const select = document.getElementById("categoryInput");
+        const wrapper = document.getElementById("customCategoryWrapper");
+        select.value === "Other" ? wrapper.classList.remove("hidden") : wrapper.classList.add("hidden");
+      }
+
+      async function processTransaction() {
+        console.log("Process button clicked"); // Debugging line
+        const amount = parseFloat(document.getElementById("amountInput").value);
+        const userEmail = localStorage.getItem("userEmail");
+        const select = document.getElementById("categoryInput");
+        let category = select.value;
+
+        if (category === "Other") {
+          const custom = document.getElementById("customCategoryInput").value.trim();
+          category = custom || "Other";
+        }
+
+        if (!amount || amount <= 0) return alert("Please enter a valid amount");
+
+        try {
+          const response = await fetch("http://localhost:5000/api/transaction", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: userEmail, amount, type: transactionType, category }),
+          });
+          if (response.ok) {
+            document.getElementById("amountInput").value = "";
+            document.getElementById("customCategoryInput").value = "";
+            closeModal();
+            refreshData();
+          }
+        } catch (err) { alert("Server error"); }
+      }
+
+      function openModal(type) {
+        transactionType = type;
+        const m = document.getElementById("transactionModal");
+        document.getElementById("modalTitle").innerText = type === "income" ? "Add Income" : "Add Expense";
+        document.getElementById("categoryInput").value = "Food";
+        document.getElementById("customCategoryWrapper").classList.add("hidden");
+        m.classList.remove("modal-hidden");
+        m.classList.add("modal-active");
+      }
+
+      function closeModal() {
+        const m = document.getElementById("transactionModal");
+        m.classList.remove("modal-active");
+        m.classList.add("modal-hidden");
+      }
+
+      function logout() { localStorage.clear(); window.location.href = "login.html"; }
+    </script>
+  </body>
+</html>
