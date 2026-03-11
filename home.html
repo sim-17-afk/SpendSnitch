@@ -226,7 +226,7 @@
 
       window.onload = async function () {
         const userEmail = localStorage.getItem("userEmail");
-        if (!userEmail) return window.location.href = "login.html";
+        if (!userEmail) return window.location.href = "index.html";
         
         const cachedName = localStorage.getItem("userName") || "User";
         document.getElementById("sidebarName").innerText = cachedName;
@@ -353,7 +353,7 @@
         m.classList.add("modal-hidden");
       }
 
-      function logout() { localStorage.clear(); window.location.href = "login.html"; }
+      function logout() { localStorage.clear(); window.location.href = "index.html"; }
     </script>
   </body>
 </html>

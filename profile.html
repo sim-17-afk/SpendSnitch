@@ -255,7 +255,7 @@
 
 window.onload = async function () {
   const userEmail = localStorage.getItem("userEmail");
-  if (!userEmail) return (window.location.href = "login.html");
+  if (!userEmail) return (window.location.href = "index.html");
 
   updateUIName();
   updateUIBio();
@@ -322,7 +322,7 @@ window.onload = async function () {
 
       function logout() {
         localStorage.clear();
-        window.location.href = "login.html";
+        window.location.href = "index.html";
       }
     </script>
   </body>
