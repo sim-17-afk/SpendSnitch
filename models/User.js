@@ -23,8 +23,8 @@ const UserSchema = new mongoose.Schema({
     },
 
     // Financial Tracking
-    // We use 'balance' to match your server.js logic: user.balance += amount
-    balance: { 
+    // We use 'savings' to match your server.js logic: user.savings += amount
+    savings: { 
         type: Number, 
         default: 0 
     },

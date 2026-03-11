@@ -40,7 +40,7 @@ app.post('/api/login', async (req, res) => {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
         if (user && user.password === password) {
-            res.json({ name: user.name, email: user.email, balance: user.balance });
+            res.json({ name: user.name, email: user.email, savings: user.savings || 0 });
         } else {
             res.status(401).json({ error: "Invalid credentials" });
         }
